@@ -3,6 +3,7 @@ from basicsr.models.esrgan_model import ESRGANModel
 import yaml
 import os
 import torch
+from esrgan_preprocess import generateFeatureFromImg
 
 current_dir = os.getcwd()
 print(current_dir)
@@ -27,5 +28,10 @@ class MyModel(torch.nn.Module):
         return y
 
 myModel = MyModel(model)
-arr = torch.randn((3,64))
-print(myModel(arr))
+
+img_path = './001249.jpg'
+img_feature = generateFeatureFromImg(img_path)
+print(img_feature.shape)
+
+out_features = myModel(img_feature)
+print(out_features.shape)
