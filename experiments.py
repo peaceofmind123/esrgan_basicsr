@@ -12,10 +12,20 @@ with open(current_dir + "/basicsr/options/test/ESRGAN/experiment_01_ESRGAN.yml",
     except yaml.YAMLError as exc:
         print(exc)
 model = ESRGANModel(opt)
-print(model.net_g)
-submodules = list(model.net_g.children())
 
 
-new_model = torch.nn.Sequential(*list(model.net_g.children())[:3]) # use layers upto the conv_body
+class MyModel(torch.nn.Module):
+    def __init__(self, model):
+        super(MyModel, self).__init__()
+        self._model = model
+        self.features = torch.nn.Sequential(
+            *list(model.net_g.children())[:3]
+        )
 
-print(new_model)
+    def forward(self, x):
+        y = self.features(x)
+        return y
+
+myModel = MyModel(model)
+arr = torch.randn((3,64))
+print(myModel(arr))
